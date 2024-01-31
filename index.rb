@@ -1,3 +1,7 @@
+require 'net/http'
+require 'json'
+require 'yaml'
+
 class ConsoleApp
   def initialize(data)
     @data = data
@@ -36,6 +40,34 @@ class ConsoleApp
   end
 
   def call_api
+    config = YAML.load_file('config.yml')
+    api_key = config['api_key']
+    full_url = "https://api.api-ninjas.com/v1/historicalevents?text=#{@data[@selected_index]}"
+    headers = {
+      'Content-Type' => 'application/json',
+      'X-Api-Key' => api_key
+    }
+
+    url = URI.parse(full_url)
+
+    # Create an HTTP object
+    http = Net::HTTP.new(url.host, url.port)
+    http.use_ssl = (url.scheme == 'https') # Enable SSL if the URL uses HTTPS
+
+    # Create a GET request with headers
+    request = Net::HTTP::Get.new(url, headers)
+
+    # Send the request and get the response
+    response = http.request(request)
+
+    # Check the response
+    if response.is_a?(Net::HTTPSuccess)
+      # Parse the JSON response
+      data = JSON.parse(response.body)
+      puts "Response: #{data[0]['event']}"
+    else
+      puts "HTTP request failed: #{response.code} - #{response.message}"
+    end
     puts "#{@data[@selected_index]} was selected"
   end
 
@@ -47,7 +79,7 @@ class ConsoleApp
 end
 
 # Example usage
-data = ["Roman History", "United States History", "Greek History"]
+data = ["Roman Empire", "World War II", "Revolutionary War"]
 app = ConsoleApp.new(data)
 app.run
 
