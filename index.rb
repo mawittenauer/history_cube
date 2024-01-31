@@ -12,29 +12,37 @@ class ConsoleApp
       prefix = index == @selected_index ? '-> ' : '   '
       puts "#{prefix}#{index + 1}. #{item}"
     end
-
-    puts "Press 'q' to quit."
   end
 
   def select_item(index)
     @selected_index = index if index.between?(0, @data.length - 1)
   end
 
-  def run
-    loop do
-      display_menu
-      input = gets.chomp.downcase
-
-      case input
-      when 'q'
-        break
-      when /\A\d+\z/
-        select_item(input.to_i - 1)
+  def select_history
+    input = gets.chomp.downcase
+    case input
+    when /^\d+$/
+      index = input.to_i - 1
+      if index.between?(0, @data.length - 1)
+        select_item(index)
       else
-        puts "Invalid input. Please enter a number or 'q' to quit."
+        puts "Invalid selection. Please enter a valid number."
         sleep(1)
       end
+    else
+      puts "Invalid input. Please enter a number or 'q' to quit."
+      sleep(1)
     end
+  end
+
+  def call_api
+    puts "#{@data[@selected_index]} was selected"
+  end
+
+  def run
+    display_menu
+    select_history
+    call_api
   end
 end
 
