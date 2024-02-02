@@ -16,12 +16,25 @@ class ConsoleApp
 
   def call_api
     api = Api.new(@favorite_history)
-    puts api.get_history
+    @data = api.get_history
+  end
+
+  def display_facts
+    index = 0
+    loop do
+      event = @data[index]
+      puts "#{event['month']}-#{event['day']}-#{event['year']}"
+      puts "#{event['event']}"
+      sleep 10
+      index += 1
+      break if index >= @data.length
+    end
   end
 
   def run
     display_menu
     call_api
+    display_facts
   end
 end
 
