@@ -1,5 +1,10 @@
-require_relative 'api'
+require_relative "api"
 require "tty-prompt"
+require "terminal-table"
+
+def add_line_breaks(input_string, break_length)
+  input_string.scan(/.{1,#{break_length}}/).join("\n")
+end
 
 class ConsoleApp
   def initialize(data)
@@ -22,9 +27,12 @@ class ConsoleApp
   def display_facts
     index = 0
     loop do
+      system('clear') || system('cls')
       event = @data[index]
-      puts "#{event['month']}-#{event['day']}-#{event['year']}"
-      puts "#{event['event']}"
+      rows = []
+      rows << ["#{event['month']}-#{event['day']}-#{event['year']}", "#{add_line_breaks(event['event'], 40)}"]
+      table = Terminal::Table.new(:title => "History Facts", :headings => ['Date', 'Event'], :rows => rows)
+      puts table
       sleep 10
       index += 1
       break if index >= @data.length
