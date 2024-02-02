@@ -34,10 +34,9 @@ class Api
     if response.is_a?(Net::HTTPSuccess)
       # Parse the JSON response
       data = JSON.parse(response.body)
-      puts "Response: #{data[0]['event']}"
-      "#{@text} was selected"
+      data
     else
-      "HTTP request failed: #{response.code} - #{response.message}"
+      puts "HTTP request failed: #{response.code} - #{response.message}"
     end
   end
 end
