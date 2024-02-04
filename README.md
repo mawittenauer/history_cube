@@ -16,3 +16,6 @@ Once your account is created add a config.yml file at the root of this project w
 ```
 api_key: YOUR_API_NINJA_KEY
 ```
+
+## About
+This code is part of a bigger project where I've created a tutorial on how to make a history cube project: https://medium.com/@mikewittenauer/building-the-history-cube-part-one-ruby-terminal-app-404baedc1e4f
