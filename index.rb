@@ -4,8 +4,9 @@ require "tty-prompt"
 require "terminal-table"
 
 class ConsoleApp
-  def initialize(data)
-    @data = data
+  def initialize(menu_selections)
+    @menu_selections = menu_selections
+    @facts = []
     @selected_index = nil
     @favorite_history = ""
   end
@@ -13,37 +14,39 @@ class ConsoleApp
   def display_menu
     system('clear') || system('cls') # Clear the console screen
     prompt = TTY::Prompt.new
-    @favorite_history = prompt.select("Choose your favorite history subject:", @data)
+    @favorite_history = prompt.select("Choose your favorite history subject:", @menu_selections)
   end
 
   def call_api
     api = Api.new(@favorite_history)
-    @data = api.get_history
+    @facts = api.get_history[0..2]
   end
 
   def display_facts
     index = 0
     loop do
       system('clear') || system('cls')
-      event = @data[index]
+      event = @facts[index]
       rows = []
       rows << ["#{event['month']}-#{event['day']}-#{event['year']}", "#{Helper.wrap_word(event['event'], 40)}"]
       table = Terminal::Table.new(:title => "History Facts", :headings => ['Date', 'Event'], :rows => rows)
       puts table
       sleep 10
       index += 1
-      break if index >= @data.length
+      break if index >= @facts.length
     end
   end
 
   def run
-    display_menu
-    call_api
-    display_facts
+    loop do
+      display_menu
+      call_api
+      display_facts
+    end
   end
 end
 
 # Example usage
-data = ["Roman Empire", "World War II", "Revolutionary War"]
-app = ConsoleApp.new(data)
+menu_selections = ["Roman Empire", "World War II", "Revolutionary War"]
+app = ConsoleApp.new(menu_selections)
 app.run
