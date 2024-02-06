@@ -12,7 +12,7 @@ class ConsoleApp
   end
 
   def display_menu
-    system('clear') || system('cls') # Clear the console screen
+    system('clear') || system('cls')
     prompt = TTY::Prompt.new
     @favorite_history = prompt.select("Choose your favorite history subject:", @menu_selections)
   end
@@ -46,7 +46,6 @@ class ConsoleApp
   end
 end
 
-# Example usage
 menu_selections = ["Roman Empire", "World War II", "Revolutionary War"]
 app = ConsoleApp.new(menu_selections)
 app.run
